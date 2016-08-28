@@ -1,0 +1,55 @@
+#!/bin/sh
+
+apk add --no-cache gcc g++ make autoconf automake git wget ca-certificates libgcrypt-dev intltool python gnutls-dev libxml2-dev lz4-dev libproxy-dev linux-headers libtool openssh-client
+mkdir -p ~/src
+cd ~/src
+wget https://www.unix-ag.uni-kl.de/~massar/vpnc/vpnc-0.5.3.tar.gz
+tar zxf vpnc-0.5.3.tar.gz
+cd vpnc-0.5.3
+cat >> sysdep.c.patch <<EOF
+--- sysdep.c.bak
++++ sysdep.c
+@@ -59,7 +59,7 @@
+ #if defined(__DragonFly__)
+ #include <net/tun/if_tun.h>
+ #elif defined(__linux__)
+-#include <linux/if_tun.h>
++//#include <linux/if_tun.h>
+ #elif defined(__APPLE__)
+ /* no header for tun */
+ #elif defined(__CYGWIN__)
+EOF
+patch sysdep.c sysdep.c.patch
+cat >> sysdep.h.patch <<EOF
+--- sysdep.h
++++ sysdep.h.diff
+@@ -38,11 +38,11 @@
+
+ /***************************************************************************/
+ #if defined(__linux__) || defined(__GLIBC__)
+-#include <error.h>
++//#include <error.h>
+
+ #define HAVE_VASPRINTF 1
+ #define HAVE_ASPRINTF  1
+-#define HAVE_ERROR     1
++//#define HAVE_ERROR     1
+ #define HAVE_GETLINE   1
+ #define HAVE_UNSETENV  1
+ #define HAVE_SETENV    1
+EOF
+patch sysdep.h sysdep.h.patch
+make
+make install
+cd ~/src
+git clone git://git.infradead.org/users/dwmw2/openconnect.git
+cd openconnect
+./autogen.sh
+./configure --without-openssl
+make
+make install
+apk del --no-cache gcc g++ make autoconf automake git wget ca-certificates libgcrypt-dev intltool python gnutls-dev libxml2-dev lz4-dev libproxy-dev linux-headers libtool
+apk add --no-cache gnutls libxml2 lz4 libproxy
+rm -rf /var/cache/apk/*
+rm -rf ~/src
+
