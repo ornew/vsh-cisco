@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+/usr/bin/openconnect --config=$HOME/.openconnect/config -b $VPN_SERVER
+/usr/bin/ssh $SSH_SERVER
