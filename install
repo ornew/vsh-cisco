@@ -45,7 +45,7 @@ cd ~/src
 git clone git://git.infradead.org/users/dwmw2/openconnect.git
 cd openconnect
 ./autogen.sh
-./configure --without-openssl --prefix=/usr/local/bin
+./configure --without-openssl
 make
 make install
 apk del --no-cache gcc g++ make autoconf automake git wget ca-certificates libgcrypt-dev intltool python gnutls-dev libxml2-dev lz4-dev libproxy-dev linux-headers libtool
